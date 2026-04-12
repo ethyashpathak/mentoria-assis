@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import ResumeEnhancer from "@/components/ResumeEnhancer";
+import Chatbot from "@/components/Chatbot";
 import { Sparkles, ArrowRight } from "lucide-react";
 
 export default function Home() {
@@ -60,6 +61,7 @@ export default function Home() {
           </a>
         </div>
       </footer>
+      <Chatbot />
     </div>
   );
 }
