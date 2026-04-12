@@ -4,8 +4,10 @@ import { useState, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Upload, FileText, CheckCircle, AlertCircle, ChevronDown, ChevronUp, Loader2, Award, Zap, LayoutTemplate, SplitSquareHorizontal, FileSearch, Sparkles
+  Upload, FileText, CheckCircle, AlertCircle, ChevronDown, ChevronUp, Loader2, Award, Zap, LayoutTemplate, SplitSquareHorizontal, FileSearch, Sparkles, Download
 } from "lucide-react";
+import { Document, Packer, Paragraph, TextRun, HeadingLevel } from "docx";
+import { saveAs } from "file-saver";
 
 type Suggestion = {
   category: string;
@@ -26,6 +28,127 @@ export default function ResumeEnhancer() {
   const [isLoading, setIsLoading] = useState(false);
   const [results, setResults] = useState<AIResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isExportingDocx, setIsExportingDocx] = useState(false);
+  const [isExportingPdf, setIsExportingPdf] = useState(false);
+
+  const handleExportDocx = async () => {
+    if (!results || !results.sections) return;
+    setIsExportingDocx(true);
+    
+    try {
+      const doc = new Document({
+        sections: [
+          {
+            properties: {},
+            children: results.sections.flatMap((section, index) => {
+              // Split enhanced section by precise newlines
+              const paragraphLines = section.enhanced.split('\n').filter(line => line.trim() !== '');
+              
+              return [
+                new Paragraph({
+                  text: section.category.toUpperCase(),
+                  heading: HeadingLevel.HEADING_2,
+                  spacing: { before: index === 0 ? 0 : 400, after: 200 },
+                }),
+                ...paragraphLines.map(line => {
+                  const trimmedLine = line.trim();
+                  // Render native docx bullets for bulleted strings
+                  if (trimmedLine.startsWith('-') || trimmedLine.startsWith('•') || trimmedLine.startsWith('*')) {
+                    return new Paragraph({
+                      text: trimmedLine.replace(/^[-•*]\s*/, ''),
+                      bullet: { level: 0 },
+                      spacing: { after: 100 }
+                    });
+                  }
+                  
+                  // Render standard paragraph lines
+                  return new Paragraph({
+                    text: trimmedLine,
+                    spacing: { after: 150 }
+                  });
+                })
+              ];
+            })
+          }
+        ]
+      });
+
+      const blob = await Packer.toBlob(doc);
+      saveAs(blob, "Mentoria_ATS_Optimized_Resume.docx");
+    } catch (err) {
+      console.error("Export failed", err);
+      setError("Failed to export ATS formatted resume. Please try again.");
+    } finally {
+      setIsExportingDocx(false);
+    }
+  };
+
+  const handleExportPdf = async () => {
+    if (!results || !results.sections) return;
+    setIsExportingPdf(true);
+    
+    try {
+      // Dynamically import heavy PDF library only when strictly invoked
+      const { Document: PDFDocument, Page, Text: PDFText, View, StyleSheet, pdf } = await import('@react-pdf/renderer');
+      
+      const pdfStyles = StyleSheet.create({
+        page: { flexDirection: 'column', backgroundColor: '#ffffff', padding: 40, fontFamily: 'Helvetica' },
+        header: { fontSize: 24, fontWeight: 'bold', marginBottom: 20, color: '#000', borderBottomWidth: 1, borderBottomColor: '#ccc', paddingBottom: 10 },
+        category: { fontSize: 13, fontWeight: 'bold', marginTop: 15, marginBottom: 8, color: '#333', textTransform: 'uppercase' },
+        text: { fontSize: 10, lineHeight: 1.5, color: '#444', marginBottom: 6 },
+        bulletRow: { flexDirection: 'row', marginBottom: 4 },
+        bulletPoint: { width: 12, fontSize: 10, color: '#444' },
+        bulletText: { flex: 1, fontSize: 10, lineHeight: 1.5, color: '#444' }
+      });
+
+      const MyDocument = (
+        <PDFDocument>
+          <Page size="A4" style={pdfStyles.page}>
+            <View>
+              <PDFText style={pdfStyles.header}>ATS Optimized Professional Resume</PDFText>
+            </View>
+            
+            {results.sections.map((section, idx) => {
+              const paragraphLines = section.enhanced.split('\n').filter((l: string) => l.trim() !== '');
+              
+              return (
+                <View key={idx}>
+                  <PDFText wrap={false} style={pdfStyles.category}>{section.category}</PDFText>
+                  
+                  {paragraphLines.map((line: string, i: number) => {
+                    const trimmedLine = line.trim();
+                    if (trimmedLine.startsWith('-') || trimmedLine.startsWith('•') || trimmedLine.startsWith('*')) {
+                      return (
+                        <View key={i} style={pdfStyles.bulletRow}>
+                          <PDFText style={pdfStyles.bulletPoint}>•</PDFText>
+                          <PDFText style={pdfStyles.bulletText}>{trimmedLine.replace(/^[-•*]\s*/, '')}</PDFText>
+                        </View>
+                      );
+                    }
+                    
+                    return (
+                      <PDFText key={i} style={pdfStyles.text}>
+                        {trimmedLine}
+                      </PDFText>
+                    );
+                  })}
+                </View>
+              );
+            })}
+          </Page>
+        </PDFDocument>
+      );
+
+      const asPdf = pdf(MyDocument);
+      const blob = await asPdf.toBlob();
+      saveAs(blob, "Mentoria_ATS_Optimized_Resume.pdf");
+    } catch (err) {
+      console.error("PDF Export failed", err);
+      setError("Failed to export PDF resume. Please try again.");
+    } finally {
+      setIsExportingPdf(false);
+    }
+  };
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles.length > 0) {
@@ -223,10 +346,30 @@ export default function ResumeEnhancer() {
             transition={{ duration: 0.7, staggerChildren: 0.15 }}
             className="flex flex-col gap-6 w-full"
           >
-            <div className="flex items-center gap-4 mt-8 mb-2">
-              <div className="h-px bg-gradient-to-r from-transparent via-white/20 to-transparent flex-grow" />
-              <h3 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-white to-white/60 tracking-tight text-center">AI Report</h3>
-              <div className="h-px bg-gradient-to-r from-transparent via-white/20 to-transparent flex-grow" />
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-8 mb-6">
+              <div className="flex items-center gap-4 flex-grow w-full">
+                <div className="h-px bg-gradient-to-r from-transparent via-white/20 to-transparent flex-grow hidden sm:block" />
+                <h3 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-white to-white/60 tracking-tight text-center whitespace-nowrap">AI Report</h3>
+                <div className="h-px bg-gradient-to-r from-transparent via-white/20 to-transparent flex-grow hidden sm:block" />
+              </div>
+              <div className="flex gap-3 w-full sm:w-auto">
+                <button 
+                  onClick={handleExportPdf}
+                  disabled={isExportingPdf}
+                  className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-2.5 bg-red-600/10 border border-red-500/20 text-red-400 hover:bg-red-600/20 font-bold rounded-full shadow-[0_0_20px_rgba(239,68,68,0.1)] hover:shadow-[0_0_30px_rgba(239,68,68,0.2)] transition-all duration-300 disabled:opacity-50 whitespace-nowrap active:scale-95"
+                >
+                  {isExportingPdf ? <Loader2 className="w-4 h-4 animate-spin flex-shrink-0" /> : <Download className="w-4 h-4 flex-shrink-0" />}
+                  Export PDF
+                </button>
+                <button 
+                  onClick={handleExportDocx}
+                  disabled={isExportingDocx}
+                  className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-2.5 bg-blue-600/10 border border-blue-500/20 text-blue-400 hover:bg-blue-600/20 font-bold rounded-full shadow-[0_0_20px_rgba(59,130,246,0.1)] hover:shadow-[0_0_30px_rgba(59,130,246,0.2)] transition-all duration-300 disabled:opacity-50 whitespace-nowrap active:scale-95"
+                >
+                  {isExportingDocx ? <Loader2 className="w-4 h-4 animate-spin flex-shrink-0" /> : <Download className="w-4 h-4 flex-shrink-0" />}
+                  Export DOCX
+                </button>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-4">
