@@ -16,20 +16,20 @@ export default function Home() {
 
       <main className="relative z-10 container mx-auto px-4 py-12 md:py-24 flex flex-col items-center">
         {/* Header Section */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="text-center max-w-4xl mx-auto mb-16 md:mb-24"
         >
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.2, duration: 0.5 }}
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/5 backdrop-blur-sm mb-8"
           >
             <Sparkles className="w-4 h-4 text-fuchsia-400" />
-            <span className="text-sm font-medium text-zinc-300">AI-Powered Tech</span>
+            <span className="text-sm font-medium text-zinc-300">Shaswat's Tech</span>
           </motion.div>
 
           <h1 className="text-5xl md:text-7xl font-black tracking-tight mb-8 leading-tight">
@@ -39,9 +39,9 @@ export default function Home() {
             </span>{" "}
             Analysis
           </h1>
-          
+
           <p className="text-lg md:text-xl text-zinc-400 leading-relaxed max-w-2xl mx-auto">
-            Upload your resume or paste its text below. Our advanced AI will analyze your experience, skills, and formatting to provide actionable, ATS-friendly suggestions.
+            Upload your resume or paste its text below. Our product will analyze your experience, skills, and formatting to provide actionable, ATS-friendly suggestions.
           </p>
         </motion.div>
 
@@ -53,8 +53,8 @@ export default function Home() {
       {/* Footer */}
       <footer className="relative z-10 border-t border-white/10 mt-24 py-8">
         <div className="container mx-auto px-4 text-center text-zinc-500 flex flex-col items-center justify-center gap-2">
-          <p>Powered by Next.js & Gemini AI</p>
-          <a href="#" className="flex items-center gap-1 hover:text-fuchsia-400 transition-colors group">
+          <p>Powered by Mentoria and Shaswat</p>
+          <a href="https://github.com/ethyashpathak/mentoria-assis" className="flex items-center gap-1 hover:text-fuchsia-400 transition-colors group">
             <span>Learn more about the project</span>
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </a>

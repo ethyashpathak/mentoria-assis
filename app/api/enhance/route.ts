@@ -40,16 +40,22 @@ export async function POST(req: Request) {
     const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash", generationConfig: { responseMimeType: "application/json" } });
 
     const prompt = `You are an expert ATS and resume reviewer. Review the following resume text and provide actionable feedback.
-For each category, tell me what is good, and what can be improved.
-Also assign a score from 1-10 for that category based on ATS-friendliness, impact, language, and structure.
+For each section (Summary, Experience, Skills, Education, Formatting, etc.), you must rewrite the section to be better, while explaining what is good and what can be improved.
+Evaluate an overall ATS-compatibility score for the entire resume out of 100.
 
-Return ONLY a valid JSON array of objects with the exact following keys:
-[{
-  "category": "String (e.g. Summary, Experience, Skills, Education, Formatting)",
-  "good": "String (What is already good)",
-  "improvements": ["String", "String"],
-  "score": Number
-}]
+Return ONLY a valid JSON object matching the exact following structure:
+{
+  "atsScore": Number (0-100),
+  "sections": [
+    {
+      "category": "String (e.g. Summary, Experience, etc.)",
+      "original": "String (The exact or summarized text from the original resume for this section)",
+      "enhanced": "String (Your completely rewritten, optimized, and ATS-friendly version of this section)",
+      "good": "String (What is currently good about this section)",
+      "improvements": ["String", "String"]
+    }
+  ]
+}
 
 Resume Text:
 ${text}
