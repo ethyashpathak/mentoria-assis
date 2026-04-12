@@ -1,0 +1,304 @@
+"use client";
+
+import { useState, useCallback } from "react";
+import { useDropzone } from "react-dropzone";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Upload, FileText, CheckCircle, AlertCircle, ChevronDown, ChevronUp, Loader2, Award, Zap, LayoutTemplate
+} from "lucide-react";
+
+type Suggestion = {
+  category: string;
+  good: string;
+  improvements: string[];
+  score: number;
+};
+
+export default function ResumeEnhancer() {
+  const [textInput, setTextInput] = useState("");
+  const [file, setFile] = useState<File | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [results, setResults] = useState<Suggestion[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const onDrop = useCallback((acceptedFiles: File[]) => {
+    if (acceptedFiles.length > 0) {
+      setFile(acceptedFiles[0]);
+      setTextInput("");
+    }
+  }, []);
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: { "application/pdf": [".pdf"] },
+    maxFiles: 1
+  });
+
+  const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setTextInput(e.target.value);
+    if (e.target.value.trim() !== "") {
+      setFile(null);
+    }
+  };
+
+  const handleEnhance = async () => {
+    if (!textInput.trim() && !file) {
+      setError("Please paste your resume text or upload a PDF.");
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+    setResults(null);
+
+    try {
+      const formData = new FormData();
+      if (file) {
+        formData.append("file", file);
+      } else {
+        formData.append("text", textInput);
+      }
+
+      const response = await fetch("/api/enhance", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to analyze resume.");
+      }
+
+      setResults(data.result);
+
+      setExpandedCats(data.result.map((_: any, i: number) => i));
+    } catch (err: any) {
+      setError(err.message || "Something went wrong.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const [expandedCats, setExpandedCats] = useState<number[]>([]);
+
+  const toggleCat = (index: number) => {
+    if (expandedCats.includes(index)) {
+      setExpandedCats(expandedCats.filter(i => i !== index));
+    } else {
+      setExpandedCats([...expandedCats, index]);
+    }
+  };
+
+  const getScoreColor = (score: number) => {
+    if (score >= 8) return "text-emerald-500 bg-emerald-500/10 border-emerald-500/20";
+    if (score >= 5) return "text-amber-500 bg-amber-500/10 border-amber-500/20";
+    return "text-red-500 bg-red-500/10 border-red-500/20";
+  };
+
+  return (
+    <div className="w-full max-w-5xl mx-auto flex flex-col gap-8 relative z-10">
+      {/* Input Section */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl p-6 md:p-10 shadow-2xl relative overflow-hidden"
+      >
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-violet-500 via-fuchsia-500 to-pink-500" />
+
+        <h2 className="text-2xl font-semibold mb-8 flex items-center gap-3 text-white">
+          <div className="p-2 bg-fuchsia-500/20 rounded-xl">
+            <FileText className="w-6 h-6 text-fuchsia-400" />
+          </div>
+          <span>Input Your Resume</span>
+        </h2>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div
+            {...getRootProps()}
+            className={`flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-3xl cursor-pointer transition-all duration-300 ease-out group ${isDragActive ? "border-fuchsia-500 bg-fuchsia-500/5 shadow-[0_0_30px_rgba(217,70,239,0.1)]" : "border-white/10 hover:border-white/30 hover:bg-white/5"
+              } ${file ? "border-emerald-500/50 bg-emerald-500/5 shadow-[0_0_30px_rgba(16,185,129,0.1)]" : ""}`}
+            style={{ minHeight: "280px" }}
+          >
+            <input {...getInputProps()} />
+
+            {file ? (
+              <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="flex flex-col items-center gap-4 text-center">
+                <div className="w-20 h-20 rounded-full bg-emerald-500/20 flex items-center justify-center mb-2 ring-8 ring-emerald-500/5">
+                  <CheckCircle className="w-10 h-10 text-emerald-400" />
+                </div>
+                <div>
+                  <p className="font-semibold text-white text-lg truncate max-w-[220px]">{file.name}</p>
+                  <p className="text-sm text-zinc-400 uppercase tracking-widest mt-2">{Math.round(file.size / 1024)} KB • PDF</p>
+                </div>
+              </motion.div>
+            ) : (
+              <div className="flex flex-col items-center gap-5 text-center">
+                <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center group-hover:scale-110 group-hover:bg-white/10 transition-all duration-300">
+                  <Upload className={`w-10 h-10 ${isDragActive ? 'text-fuchsia-400' : 'text-zinc-400'}`} />
+                </div>
+                <div>
+                  <p className="font-medium text-white text-lg mb-1">Drag & drop your PDF</p>
+                  <p className="text-sm text-zinc-400">or click to browse local files</p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="flex flex-col h-full relative group">
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-violet-500/30 to-fuchsia-500/30 rounded-3xl blur-xl opacity-0 group-focus-within:opacity-100 transition duration-700 pointer-events-none"></div>
+            <textarea
+              className="w-full relative bg-black/40 border border-white/10 rounded-3xl p-8 text-white placeholder-zinc-500 focus:outline-none focus:border-fuchsia-500/50 focus:bg-black/60 shadow-inner resize-none transition-all duration-500 flex-grow text-base leading-relaxed"
+              placeholder="Or paste your resume text manually here..."
+              value={textInput}
+              onChange={handleTextChange}
+              style={{ minHeight: "280px" }}
+            />
+          </div>
+        </div>
+
+        <div className="mt-10 flex flex-col sm:flex-row items-center justify-between gap-6 border-t border-white/5 pt-8">
+          <div className="text-sm text-zinc-400 flex items-center gap-2 bg-white/5 px-4 py-2 rounded-full">
+            <AlertCircle className="w-4 h-4 text-amber-500/80" />
+            Your data is analyzed securely via AI
+          </div>
+          <button
+            onClick={handleEnhance}
+            disabled={isLoading || (!file && !textInput.trim())}
+            className="group relative px-8 py-4 bg-white text-black font-bold text-lg rounded-full overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 w-full sm:w-auto shadow-[0_0_40px_rgba(255,255,255,0.2)] hover:shadow-[0_0_60px_rgba(255,255,255,0.4)]"
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-violet-200 to-fuchsia-200 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <span className="relative flex items-center gap-3 justify-center">
+              {isLoading ? (
+                <>
+                  <Loader2 className="w-6 h-6 animate-spin" />
+                  Analyzing Magic...
+                </>
+              ) : (
+                <>
+                  <Zap className="w-6 h-6 text-violet-600 fill-violet-600" />
+                  Enhance My Resume
+                </>
+              )}
+            </span>
+          </button>
+        </div>
+
+        {error && (
+          <motion.div initial={{ opacity: 0, height: 0, marginTop: 0 }} animate={{ opacity: 1, height: "auto", marginTop: 24 }} className="p-4 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-200 flex items-center gap-3 shadow-[0_0_20px_rgba(239,68,68,0.1)]">
+            <AlertCircle className="w-5 h-5 flex-shrink-0 text-red-400" />
+            <p>{error}</p>
+          </motion.div>
+        )}
+      </motion.div>
+
+      {/* Results Section */}
+      <AnimatePresence mode="wait">
+        {results && (
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.7, staggerChildren: 0.15 }}
+            className="flex flex-col gap-6 w-full"
+          >
+            <div className="flex items-center gap-4 mt-8 mb-2">
+              <div className="h-px bg-gradient-to-r from-transparent via-white/20 to-transparent flex-grow" />
+              <h3 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-white to-white/60 tracking-tight text-center">AI Report</h3>
+              <div className="h-px bg-gradient-to-r from-transparent via-white/20 to-transparent flex-grow" />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-4">
+              {/* Summary Cards */}
+              <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.2 }} className="bg-gradient-to-br from-white/10 to-white/5 border border-white/10 rounded-3xl p-6 md:p-8 backdrop-blur-xl shadow-xl">
+                <p className="text-sm font-medium text-zinc-400 mb-2 uppercase tracking-wider">Overall Score</p>
+                <div className="text-5xl font-black text-white flex items-baseline gap-2">
+                  {Math.round(results.reduce((acc, curr) => acc + curr.score, 0) / results.length)}
+                  <span className="text-2xl font-bold text-zinc-600">/10</span>
+                </div>
+              </motion.div>
+              <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.3 }} className="bg-gradient-to-br from-white/10 to-white/5 border border-white/10 rounded-3xl p-6 md:p-8 backdrop-blur-xl shadow-xl">
+                <p className="text-sm font-medium text-zinc-400 mb-2 uppercase tracking-wider">Categories</p>
+                <div className="text-5xl font-black text-white">{results.length}</div>
+              </motion.div>
+              <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.4 }} className="bg-gradient-to-br from-white/10 to-white/5 border border-white/10 rounded-3xl p-6 md:p-8 backdrop-blur-xl shadow-xl">
+                <p className="text-sm font-medium text-zinc-400 mb-2 uppercase tracking-wider">Action Items</p>
+                <div className="text-5xl font-black text-fuchsia-400">{results.reduce((acc, curr) => acc + curr.improvements.length, 0)}</div>
+              </motion.div>
+            </div>
+
+            <div className="space-y-4">
+              {results.map((item, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.5 + index * 0.1 }}
+                  className="bg-black/40 border border-white/10 rounded-3xl overflow-hidden backdrop-blur-xl transition-all duration-300 hover:border-white/20 hover:bg-black/60 shadow-lg"
+                >
+                  <div
+                    className="flex flex-col sm:flex-row sm:items-center justify-between p-6 md:p-8 cursor-pointer gap-4 group"
+                    onClick={() => toggleCat(index)}
+                  >
+                    <div className="flex items-center gap-5">
+                      <div className={`px-4 py-2 rounded-2xl border-2 font-black text-lg shadow-inner ${getScoreColor(item.score)}`}>
+                        {item.score}<span className="opacity-50 font-medium">/10</span>
+                      </div>
+                      <h4 className="text-2xl font-semibold text-white group-hover:text-fuchsia-100 transition-colors">{item.category}</h4>
+                    </div>
+                    <div className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-zinc-400 group-hover:text-white group-hover:bg-white/10 group-hover:scale-110 transition-all duration-300 self-end sm:self-auto">
+                      {expandedCats.includes(index) ? <ChevronUp className="w-6 h-6" /> : <ChevronDown className="w-6 h-6" />}
+                    </div>
+                  </div>
+
+                  <AnimatePresence>
+                    {expandedCats.includes(index) && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="p-6 md:p-8 pt-0 border-t border-white/5 bg-gradient-to-b from-transparent to-white/[0.02]">
+                          <div className="mt-6 mb-10 relative bg-emerald-500/5 border border-emerald-500/10 rounded-2xl p-6">
+                            <h5 className="flex items-center gap-3 text-emerald-400 font-bold text-lg mb-4">
+                              <div className="p-2 bg-emerald-500/20 rounded-lg">
+                                <Award className="w-5 h-5" />
+                              </div>
+                              What's Working Well
+                            </h5>
+                            <p className="text-zinc-200 leading-relaxed text-lg">
+                              {item.good}
+                            </p>
+                          </div>
+
+                          <div className="relative bg-fuchsia-500/5 border border-fuchsia-500/10 rounded-2xl p-6">
+                            <h5 className="flex items-center gap-3 text-fuchsia-400 font-bold text-lg mb-5">
+                              <div className="p-2 bg-fuchsia-500/20 rounded-lg">
+                                <LayoutTemplate className="w-5 h-5" />
+                              </div>
+                              Areas for Improvement
+                            </h5>
+                            <ul className="space-y-4">
+                              {item.improvements.map((improvement, i) => (
+                                <li key={i} className="flex gap-4 text-zinc-200 leading-relaxed text-lg">
+                                  <span className="w-2 h-2 mt-2.5 rounded-full bg-fuchsia-500/70 flex-shrink-0 shadow-[0_0_10px_rgba(217,70,239,0.5)]"></span>
+                                  <span>{improvement}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
