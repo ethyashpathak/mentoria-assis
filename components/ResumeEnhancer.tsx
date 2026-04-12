@@ -30,6 +30,7 @@ export default function ResumeEnhancer() {
   const [error, setError] = useState<string | null>(null);
   const [isExportingDocx, setIsExportingDocx] = useState(false);
   const [isExportingPdf, setIsExportingPdf] = useState(false);
+  const [isExportingLatex, setIsExportingLatex] = useState(false);
 
   const handleExportDocx = async () => {
     if (!results || !results.sections) return;
@@ -147,6 +148,32 @@ export default function ResumeEnhancer() {
       setError("Failed to export PDF resume. Please try again.");
     } finally {
       setIsExportingPdf(false);
+    }
+  };
+
+  const handleExportLatex = async () => {
+    if (!results || !results.sections) return;
+    setIsExportingLatex(true);
+    
+    try {
+      const response = await fetch("/api/latex", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sections: results.sections }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to generate LaTeX");
+      }
+
+      const blob = await response.blob();
+      saveAs(blob, "Mentoria_Optimized_Resume.tex");
+    } catch (err: any) {
+      console.error("LaTeX Export failed", err);
+      setError(err.message || "Failed to export LaTeX resume. Please try again.");
+    } finally {
+      setIsExportingLatex(false);
     }
   };
 
@@ -352,10 +379,10 @@ export default function ResumeEnhancer() {
                 <h3 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-white to-white/60 tracking-tight text-center whitespace-nowrap">AI Report</h3>
                 <div className="h-px bg-gradient-to-r from-transparent via-white/20 to-transparent flex-grow hidden sm:block" />
               </div>
-              <div className="flex gap-3 w-full sm:w-auto">
+              <div className="flex gap-3 w-full sm:w-auto flex-wrap sm:flex-nowrap justify-center">
                 <button 
                   onClick={handleExportPdf}
-                  disabled={isExportingPdf}
+                  disabled={isExportingPdf || isExportingDocx || isExportingLatex}
                   className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-2.5 bg-red-600/10 border border-red-500/20 text-red-400 hover:bg-red-600/20 font-bold rounded-full shadow-[0_0_20px_rgba(239,68,68,0.1)] hover:shadow-[0_0_30px_rgba(239,68,68,0.2)] transition-all duration-300 disabled:opacity-50 whitespace-nowrap active:scale-95"
                 >
                   {isExportingPdf ? <Loader2 className="w-4 h-4 animate-spin flex-shrink-0" /> : <Download className="w-4 h-4 flex-shrink-0" />}
@@ -363,11 +390,19 @@ export default function ResumeEnhancer() {
                 </button>
                 <button 
                   onClick={handleExportDocx}
-                  disabled={isExportingDocx}
+                  disabled={isExportingPdf || isExportingDocx || isExportingLatex}
                   className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-2.5 bg-blue-600/10 border border-blue-500/20 text-blue-400 hover:bg-blue-600/20 font-bold rounded-full shadow-[0_0_20px_rgba(59,130,246,0.1)] hover:shadow-[0_0_30px_rgba(59,130,246,0.2)] transition-all duration-300 disabled:opacity-50 whitespace-nowrap active:scale-95"
                 >
                   {isExportingDocx ? <Loader2 className="w-4 h-4 animate-spin flex-shrink-0" /> : <Download className="w-4 h-4 flex-shrink-0" />}
                   Export DOCX
+                </button>
+                <button 
+                  onClick={handleExportLatex}
+                  disabled={isExportingPdf || isExportingDocx || isExportingLatex}
+                  className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-2.5 bg-emerald-600/10 border border-emerald-500/20 text-emerald-400 hover:bg-emerald-600/20 font-bold rounded-full shadow-[0_0_20px_rgba(16,185,129,0.1)] hover:shadow-[0_0_30px_rgba(16,185,129,0.2)] transition-all duration-300 disabled:opacity-50 whitespace-nowrap active:scale-95"
+                >
+                  {isExportingLatex ? <Loader2 className="w-4 h-4 animate-spin flex-shrink-0" /> : <Download className="w-4 h-4 flex-shrink-0" />}
+                  Export LaTeX
                 </button>
               </div>
             </div>
