@@ -23,6 +23,7 @@ The platform is designed with a modern, serverless-ready stack emphasizing perfo
 - **Document Parsing Pipeline:** Native client-side drag-and-drop interface coupled with server-side PDF text extraction, fallback to manual text entry.
 - **Dynamic ATS Scoring:** Evaluates the overall structure, language, and readability of the resume to generate a strict ATS compatibility percentage (0-100 scale) displayed via a dynamic SVG progression ring.
 - **Micro-Targeted Refactoring:** Analyzes distinct resume sections (Summary, Experience, Skills, Education) and provides alternating UI panes to compare "Original" vs "Enhanced" formulations.
+- **Interactive Career Assistant Chatbot:** A sophisticated, globally injected floating widget utilizing a custom-scoped Gemini API endpoint. Strictly bounded via system instructions to provide contextual, expert resume framing and job-hunting advice.
 - **Premium Interface:** Built with a dark-mode first design philosophy utilizing glassmorphism, subtle neon gradients, and hardware-accelerated Framer Motion transitions.
 
 ## Getting Started
@@ -65,12 +66,15 @@ Ensure you have the following installed before proceeding:
 mentoria-assis/
 ├── app/
 │   ├── api/
+│   │   ├── chat/
+│   │   │   └── route.ts         # Stateful conversation endpoint for AI counselor
 │   │   └── enhance/
 │   │       └── route.ts         # Secure serverless endpoint for AI parsing
 │   ├── globals.css              # Global tokens and Tailwind imports
 │   ├── layout.tsx               # Root DOM layout
 │   └── page.tsx                 # Primary viewport and landing
 ├── components/
+│   ├── Chatbot.tsx              # Floating framer-motion career chatbot widget
 │   └── ResumeEnhancer.tsx       # Core interactive enhancement interface
 ├── public/                      # Static assets
 └── next.config.ts               # Next.js compiler and experimental directives
