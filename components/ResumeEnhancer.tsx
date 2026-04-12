@@ -181,7 +181,7 @@ export default function ResumeEnhancer() {
         <div className="mt-10 flex flex-col sm:flex-row items-center justify-between gap-6 border-t border-white/5 pt-8">
           <div className="text-sm text-zinc-400 flex items-center gap-2 bg-white/5 px-4 py-2 rounded-full">
             <AlertCircle className="w-4 h-4 text-amber-500/80" />
-            Your data is analyzed securely via AI
+            Your data stays safe and protected with Mentoria
           </div>
           <button
             onClick={handleEnhance}
@@ -235,14 +235,14 @@ export default function ResumeEnhancer() {
                 <div className="relative w-24 h-24 flex items-center justify-center flex-shrink-0">
                   <svg className="w-full h-full transform -rotate-90" viewBox="0 0 80 80">
                     <circle cx="40" cy="40" r="36" className="text-white/10 stroke-current" strokeWidth="8" fill="transparent" />
-                    <circle 
-                      cx="40" cy="40" r="36" 
-                      className={`${results.atsScore >= 80 ? 'text-emerald-500' : results.atsScore >= 50 ? 'text-amber-500' : 'text-red-500'} stroke-current transition-all duration-1000 ease-out`} 
-                      strokeWidth="8" 
-                      fill="transparent" 
+                    <circle
+                      cx="40" cy="40" r="36"
+                      className={`${results.atsScore >= 80 ? 'text-emerald-500' : results.atsScore >= 50 ? 'text-amber-500' : 'text-red-500'} stroke-current transition-all duration-1000 ease-out`}
+                      strokeWidth="8"
+                      fill="transparent"
                       strokeDasharray="226"
                       strokeDashoffset={getPercentageDashoffset(results.atsScore || 0)}
-                      strokeLinecap="round" 
+                      strokeLinecap="round"
                     />
                   </svg>
                   <div className="absolute inset-0 flex items-center justify-center">
@@ -254,7 +254,7 @@ export default function ResumeEnhancer() {
                   <p className="text-zinc-400">This score represents how well your resume is formatted and phrased for Applicant Tracking Systems.</p>
                 </div>
               </motion.div>
-              
+
               <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.3 }} className="bg-gradient-to-br from-white/10 to-white/5 border border-white/10 rounded-3xl p-6 md:p-8 backdrop-blur-xl shadow-xl flex flex-col justify-center items-center">
                 <p className="text-sm font-medium text-zinc-400 mb-2 uppercase tracking-wider text-center">Sections Analyzed</p>
                 <div className="text-5xl font-black text-fuchsia-400">{results.sections.length}</div>
@@ -266,107 +266,108 @@ export default function ResumeEnhancer() {
                 const currentTab = activeTabs[index] || "feedback";
 
                 return (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.5 + index * 0.1 }}
-                  className="bg-black/40 border border-white/10 rounded-3xl overflow-hidden backdrop-blur-xl transition-all duration-300 hover:border-white/20 shadow-lg"
-                >
-                  <div
-                    className="flex flex-col sm:flex-row sm:items-center justify-between p-6 md:p-8 cursor-pointer gap-4 group hover:bg-white/5 transition-colors"
-                    onClick={() => toggleCat(index)}
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.5 + index * 0.1 }}
+                    className="bg-black/40 border border-white/10 rounded-3xl overflow-hidden backdrop-blur-xl transition-all duration-300 hover:border-white/20 shadow-lg"
                   >
-                    <div className="flex items-center gap-5">
-                      <div className="p-3 bg-white/10 rounded-2xl border border-white/5 group-hover:border-white/20 group-hover:bg-white/20 transition-all">
-                        <FileSearch className="w-6 h-6 text-white" />
-                      </div>
-                      <h4 className="text-xl font-semibold text-white group-hover:text-fuchsia-300 transition-colors">{item.category}</h4>
-                    </div>
-                    <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-zinc-400 group-hover:text-white group-hover:bg-white/10 group-hover:scale-110 transition-all duration-300 self-end sm:self-auto">
-                      {expandedCats.includes(index) ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
-                    </div>
-                  </div>
-
-                  <AnimatePresence>
-                    {expandedCats.includes(index) && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        className="overflow-hidden"
-                      >
-                        <div className="px-6 md:px-8 pb-6 md:pb-8 pt-0 border-t border-white/5 bg-gradient-to-b from-transparent to-white/[0.02]">
-                          
-                          {/* Tab Controls */}
-                          <div className="flex items-center justify-center my-6">
-                            <div className="p-1 bg-white/5 rounded-full border border-white/10 flex">
-                              <button 
-                                onClick={(e) => { e.stopPropagation(); switchTab(index, "feedback") }}
-                                className={`px-6 py-2 rounded-full text-sm font-semibold transition-all duration-300 flex items-center gap-2 ${currentTab === 'feedback' ? 'bg-white text-black shadow-md' : 'text-zinc-400 hover:text-white'}`}
-                              >
-                                <LayoutTemplate className="w-4 h-4" /> Feedback
-                              </button>
-                              <button 
-                                onClick={(e) => { e.stopPropagation(); switchTab(index, "comparison") }}
-                                className={`px-6 py-2 rounded-full text-sm font-semibold transition-all duration-300 flex items-center gap-2 ${currentTab === 'comparison' ? 'bg-white text-black shadow-md' : 'text-zinc-400 hover:text-white'}`}
-                              >
-                                <SplitSquareHorizontal className="w-4 h-4" /> Before / After
-                              </button>
-                            </div>
-                          </div>
-
-                          <AnimatePresence mode="wait">
-                            {currentTab === "feedback" && (
-                              <motion.div key="feedback" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.98 }} transition={{ duration: 0.2 }}>
-                                <div className="mt-2 mb-6 relative bg-emerald-500/5 border border-emerald-500/10 rounded-2xl p-6">
-                                  <h5 className="flex items-center gap-3 text-emerald-400 font-bold text-lg mb-4">
-                                    <div className="p-2 bg-emerald-500/20 rounded-lg"><Award className="w-5 h-5" /></div>
-                                    What's Working Well
-                                  </h5>
-                                  <p className="text-zinc-200 leading-relaxed text-base">{item.good}</p>
-                                </div>
-
-                                <div className="relative bg-fuchsia-500/5 border border-fuchsia-500/10 rounded-2xl p-6">
-                                  <h5 className="flex items-center gap-3 text-fuchsia-400 font-bold text-lg mb-5">
-                                    <div className="p-2 bg-fuchsia-500/20 rounded-lg"><LayoutTemplate className="w-5 h-5" /></div>
-                                    Areas for Improvement
-                                  </h5>
-                                  <ul className="space-y-4">
-                                    {item.improvements.map((improvement, i) => (
-                                      <li key={i} className="flex gap-4 text-zinc-200 leading-relaxed text-base">
-                                        <span className="w-2 h-2 mt-2.5 rounded-full bg-fuchsia-500/70 flex-shrink-0 shadow-[0_0_10px_rgba(217,70,239,0.5)]"></span>
-                                        <span>{improvement}</span>
-                                      </li>
-                                    ))}
-                                  </ul>
-                                </div>
-                              </motion.div>
-                            )}
-                            
-                            {currentTab === "comparison" && (
-                              <motion.div key="comparison" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.98 }} transition={{ duration: 0.2 }} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                                <div className="bg-black/30 border border-white/5 rounded-2xl p-6 overflow-x-auto">
-                                  <h5 className="text-sm uppercase tracking-widest text-zinc-500 font-bold mb-4 flex items-center gap-2">Original</h5>
-                                  <p className="text-zinc-400 font-mono text-sm whitespace-pre-wrap leading-relaxed">{item.original}</p>
-                                </div>
-                                <div className="bg-fuchsia-500/5 border border-fuchsia-500/20 rounded-2xl p-6 overflow-x-auto relative">
-                                  <div className="absolute top-0 right-0 p-4">
-                                    <Sparkles className="w-5 h-5 text-fuchsia-400 opacity-50" />
-                                  </div>
-                                  <h5 className="text-sm uppercase tracking-widest text-fuchsia-400 font-bold mb-4 flex items-center gap-2">Enhanced Revision</h5>
-                                  <p className="text-zinc-100 font-mono text-sm whitespace-pre-wrap leading-relaxed">{item.enhanced}</p>
-                                </div>
-                              </motion.div>
-                            )}
-                          </AnimatePresence>
-
+                    <div
+                      className="flex flex-col sm:flex-row sm:items-center justify-between p-6 md:p-8 cursor-pointer gap-4 group hover:bg-white/5 transition-colors"
+                      onClick={() => toggleCat(index)}
+                    >
+                      <div className="flex items-center gap-5">
+                        <div className="p-3 bg-white/10 rounded-2xl border border-white/5 group-hover:border-white/20 group-hover:bg-white/20 transition-all">
+                          <FileSearch className="w-6 h-6 text-white" />
                         </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </motion.div>
-              )})}
+                        <h4 className="text-xl font-semibold text-white group-hover:text-fuchsia-300 transition-colors">{item.category}</h4>
+                      </div>
+                      <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-zinc-400 group-hover:text-white group-hover:bg-white/10 group-hover:scale-110 transition-all duration-300 self-end sm:self-auto">
+                        {expandedCats.includes(index) ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                      </div>
+                    </div>
+
+                    <AnimatePresence>
+                      {expandedCats.includes(index) && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          className="overflow-hidden"
+                        >
+                          <div className="px-6 md:px-8 pb-6 md:pb-8 pt-0 border-t border-white/5 bg-gradient-to-b from-transparent to-white/[0.02]">
+
+                            {/* Tab Controls */}
+                            <div className="flex items-center justify-center my-6">
+                              <div className="p-1 bg-white/5 rounded-full border border-white/10 flex">
+                                <button
+                                  onClick={(e) => { e.stopPropagation(); switchTab(index, "feedback") }}
+                                  className={`px-6 py-2 rounded-full text-sm font-semibold transition-all duration-300 flex items-center gap-2 ${currentTab === 'feedback' ? 'bg-white text-black shadow-md' : 'text-zinc-400 hover:text-white'}`}
+                                >
+                                  <LayoutTemplate className="w-4 h-4" /> Feedback
+                                </button>
+                                <button
+                                  onClick={(e) => { e.stopPropagation(); switchTab(index, "comparison") }}
+                                  className={`px-6 py-2 rounded-full text-sm font-semibold transition-all duration-300 flex items-center gap-2 ${currentTab === 'comparison' ? 'bg-white text-black shadow-md' : 'text-zinc-400 hover:text-white'}`}
+                                >
+                                  <SplitSquareHorizontal className="w-4 h-4" /> Before / After
+                                </button>
+                              </div>
+                            </div>
+
+                            <AnimatePresence mode="wait">
+                              {currentTab === "feedback" && (
+                                <motion.div key="feedback" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.98 }} transition={{ duration: 0.2 }}>
+                                  <div className="mt-2 mb-6 relative bg-emerald-500/5 border border-emerald-500/10 rounded-2xl p-6">
+                                    <h5 className="flex items-center gap-3 text-emerald-400 font-bold text-lg mb-4">
+                                      <div className="p-2 bg-emerald-500/20 rounded-lg"><Award className="w-5 h-5" /></div>
+                                      What's Working Well
+                                    </h5>
+                                    <p className="text-zinc-200 leading-relaxed text-base">{item.good}</p>
+                                  </div>
+
+                                  <div className="relative bg-fuchsia-500/5 border border-fuchsia-500/10 rounded-2xl p-6">
+                                    <h5 className="flex items-center gap-3 text-fuchsia-400 font-bold text-lg mb-5">
+                                      <div className="p-2 bg-fuchsia-500/20 rounded-lg"><LayoutTemplate className="w-5 h-5" /></div>
+                                      Areas for Improvement
+                                    </h5>
+                                    <ul className="space-y-4">
+                                      {item.improvements.map((improvement, i) => (
+                                        <li key={i} className="flex gap-4 text-zinc-200 leading-relaxed text-base">
+                                          <span className="w-2 h-2 mt-2.5 rounded-full bg-fuchsia-500/70 flex-shrink-0 shadow-[0_0_10px_rgba(217,70,239,0.5)]"></span>
+                                          <span>{improvement}</span>
+                                        </li>
+                                      ))}
+                                    </ul>
+                                  </div>
+                                </motion.div>
+                              )}
+
+                              {currentTab === "comparison" && (
+                                <motion.div key="comparison" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.98 }} transition={{ duration: 0.2 }} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                  <div className="bg-black/30 border border-white/5 rounded-2xl p-6 overflow-x-auto">
+                                    <h5 className="text-sm uppercase tracking-widest text-zinc-500 font-bold mb-4 flex items-center gap-2">Original</h5>
+                                    <p className="text-zinc-400 font-mono text-sm whitespace-pre-wrap leading-relaxed">{item.original}</p>
+                                  </div>
+                                  <div className="bg-fuchsia-500/5 border border-fuchsia-500/20 rounded-2xl p-6 overflow-x-auto relative">
+                                    <div className="absolute top-0 right-0 p-4">
+                                      <Sparkles className="w-5 h-5 text-fuchsia-400 opacity-50" />
+                                    </div>
+                                    <h5 className="text-sm uppercase tracking-widest text-fuchsia-400 font-bold mb-4 flex items-center gap-2">Enhanced Revision</h5>
+                                    <p className="text-zinc-100 font-mono text-sm whitespace-pre-wrap leading-relaxed">{item.enhanced}</p>
+                                  </div>
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
+
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </motion.div>
+                )
+              })}
             </div>
           </motion.div>
         )}
