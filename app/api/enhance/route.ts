@@ -37,7 +37,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Could not extract text from the file or received empty input." }, { status: 400 });
     }
 
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash", generationConfig: { responseMimeType: "application/json" } });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite", generationConfig: { responseMimeType: "application/json" } });
 
     const prompt = `You are an expert ATS optimizer and executive resume writer. Review the following resume text and deeply analyze it.
 Evaluate an overall ATS-compatibility score for the entire resume out of 100.

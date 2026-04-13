@@ -14,13 +14,13 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Message is required" }, { status: 400 });
     }
 
-    const model = genAI.getGenerativeModel({ 
-        model: "gemini-2.5-flash",
-        systemInstruction: SYSTEM_INSTRUCTION
+    const model = genAI.getGenerativeModel({
+      model: "gemini-2.5-flash-lite",
+      systemInstruction: SYSTEM_INSTRUCTION
     });
 
     const chat = model.startChat({
-        history: history || [],
+      history: history || [],
     });
 
     const result = await chat.sendMessage(message);

@@ -263,7 +263,7 @@ export async function POST(req: Request) {
 			return NextResponse.json({ error: "Invalid parsed resume payload format." }, { status: 400 });
 		}
 
-		const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash", generationConfig: { responseMimeType: "text/plain" } });
+		const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite", generationConfig: { responseMimeType: "text/plain" } });
 
 		// Stringify the passed JSON payload explicitly for Gemini context
 		const inputJsonData = JSON.stringify(sections, null, 2);
