@@ -275,11 +275,11 @@ export default function ResumeEnhancer() {
         transition={{ duration: 0.5 }}
         className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl p-6 md:p-10 shadow-2xl relative overflow-hidden"
       >
-        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-violet-500 via-fuchsia-500 to-pink-500" />
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500" />
 
         <h2 className="text-2xl font-semibold mb-8 flex items-center gap-3 text-white">
-          <div className="p-2 bg-fuchsia-500/20 rounded-xl">
-            <FileText className="w-6 h-6 text-fuchsia-400" />
+          <div className="p-2 bg-cyan-500/20 rounded-xl">
+            <FileText className="w-6 h-6 text-cyan-400" />
           </div>
           <span>Input Your Resume</span>
         </h2>
@@ -287,8 +287,8 @@ export default function ResumeEnhancer() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <div
             {...getRootProps()}
-            className={`flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-3xl cursor-pointer transition-all duration-300 ease-out group ${isDragActive ? "border-fuchsia-500 bg-fuchsia-500/5 shadow-[0_0_30px_rgba(217,70,239,0.1)]" : "border-white/10 hover:border-white/30 hover:bg-white/5"
-              } ${file ? "border-emerald-500/50 bg-emerald-500/5 shadow-[0_0_30px_rgba(16,185,129,0.1)]" : ""}`}
+            className={`flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-3xl cursor-pointer transition-all duration-300 ease-out group ${isDragActive ? "border-cyan-500 bg-cyan-500/5" : "border-white/10 hover:border-white/30 hover:bg-white/5"
+              } ${file ? "border-emerald-500/50 bg-emerald-500/5" : ""}`}
             style={{ minHeight: "280px" }}
           >
             <input {...getInputProps()} />
@@ -305,8 +305,8 @@ export default function ResumeEnhancer() {
               </motion.div>
             ) : (
               <div className="flex flex-col items-center gap-5 text-center">
-                <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center group-hover:scale-110 group-hover:bg-white/10 transition-all duration-300">
-                  <Upload className={`w-10 h-10 ${isDragActive ? 'text-fuchsia-400' : 'text-zinc-400'}`} />
+                <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-white/10 transition-all duration-300">
+                  <Upload className={`w-10 h-10 ${isDragActive ? 'text-cyan-400' : 'text-zinc-400'}`} />
                 </div>
                 <div>
                   <p className="font-medium text-white text-lg mb-1">Drag & drop your PDF</p>
@@ -317,9 +317,9 @@ export default function ResumeEnhancer() {
           </div>
 
           <div className="flex flex-col h-full relative group">
-            <div className="absolute -inset-0.5 bg-gradient-to-r from-violet-500/30 to-fuchsia-500/30 rounded-3xl blur-xl opacity-0 group-focus-within:opacity-100 transition duration-700 pointer-events-none"></div>
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500/20 to-indigo-500/20 rounded-3xl blur-xl opacity-0 group-focus-within:opacity-50 transition duration-700 pointer-events-none"></div>
             <textarea
-              className="w-full relative bg-black/40 border border-white/10 rounded-3xl p-8 text-white placeholder-zinc-500 focus:outline-none focus:border-fuchsia-500/50 focus:bg-black/60 shadow-inner resize-none transition-all duration-500 flex-grow text-base leading-relaxed"
+              className="w-full relative bg-black/40 border border-white/10 rounded-3xl p-8 text-white placeholder-zinc-500 focus:outline-none focus:border-cyan-500/50 focus:bg-black/60 shadow-inner resize-none transition-all duration-500 flex-grow text-base leading-relaxed"
               placeholder="Or paste your resume text manually here..."
               value={textInput}
               onChange={handleTextChange}
@@ -336,9 +336,9 @@ export default function ResumeEnhancer() {
           <button
             onClick={handleEnhance}
             disabled={isLoading || (!file && !textInput.trim())}
-            className="group relative px-8 py-4 bg-white text-black font-bold text-lg rounded-full overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 w-full sm:w-auto shadow-[0_0_40px_rgba(255,255,255,0.2)] hover:shadow-[0_0_60px_rgba(255,255,255,0.4)]"
+            className="group relative px-8 py-4 bg-white text-black font-bold text-lg rounded-full overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 w-full sm:w-auto shadow-sm hover:shadow-md hover:bg-slate-100"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-violet-200 to-fuchsia-200 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <div className="absolute inset-0 bg-gradient-to-r from-cyan-100 to-indigo-100 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             <span className="relative flex items-center gap-3 justify-center">
               {isLoading ? (
                 <>
@@ -347,7 +347,7 @@ export default function ResumeEnhancer() {
                 </>
               ) : (
                 <>
-                  <Zap className="w-6 h-6 text-violet-600 fill-violet-600" />
+                  <Zap className="w-6 h-6 text-indigo-600 fill-indigo-600" />
                   Enhance My Resume
                 </>
               )}
@@ -435,7 +435,7 @@ export default function ResumeEnhancer() {
 
               <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.3 }} className="bg-gradient-to-br from-white/10 to-white/5 border border-white/10 rounded-3xl p-6 md:p-8 backdrop-blur-xl shadow-xl flex flex-col justify-center items-center">
                 <p className="text-sm font-medium text-zinc-400 mb-2 uppercase tracking-wider text-center">Sections Analyzed</p>
-                <div className="text-5xl font-black text-fuchsia-400">{results.sections.length}</div>
+                <div className="text-5xl font-black text-cyan-400">{results.sections.length}</div>
               </motion.div>
             </div>
 
@@ -459,7 +459,7 @@ export default function ResumeEnhancer() {
                         <div className="p-3 bg-white/10 rounded-2xl border border-white/5 group-hover:border-white/20 group-hover:bg-white/20 transition-all">
                           <FileSearch className="w-6 h-6 text-white" />
                         </div>
-                        <h4 className="text-xl font-semibold text-white group-hover:text-fuchsia-300 transition-colors">{item.category}</h4>
+                        <h4 className="text-xl font-semibold text-white group-hover:text-cyan-400 transition-colors">{item.category}</h4>
                       </div>
                       <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-zinc-400 group-hover:text-white group-hover:bg-white/10 group-hover:scale-110 transition-all duration-300 self-end sm:self-auto">
                         {expandedCats.includes(index) ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
@@ -505,15 +505,15 @@ export default function ResumeEnhancer() {
                                     <p className="text-zinc-200 leading-relaxed text-base">{item.good}</p>
                                   </div>
 
-                                  <div className="relative bg-fuchsia-500/5 border border-fuchsia-500/10 rounded-2xl p-6">
-                                    <h5 className="flex items-center gap-3 text-fuchsia-400 font-bold text-lg mb-5">
-                                      <div className="p-2 bg-fuchsia-500/20 rounded-lg"><LayoutTemplate className="w-5 h-5" /></div>
+                                  <div className="relative bg-indigo-500/5 border border-indigo-500/20 rounded-2xl p-6">
+                                    <h5 className="flex items-center gap-3 text-indigo-300 font-bold text-lg mb-5">
+                                      <div className="p-2 bg-indigo-500/20 rounded-lg"><LayoutTemplate className="w-5 h-5" /></div>
                                       Areas for Improvement
                                     </h5>
                                     <ul className="space-y-4">
                                       {item.improvements.map((improvement, i) => (
-                                        <li key={i} className="flex gap-4 text-zinc-200 leading-relaxed text-base">
-                                          <span className="w-2 h-2 mt-2.5 rounded-full bg-fuchsia-500/70 flex-shrink-0 shadow-[0_0_10px_rgba(217,70,239,0.5)]"></span>
+                                        <li key={i} className="flex gap-4 text-zinc-300 leading-relaxed text-base">
+                                          <span className="w-2 h-2 mt-2.5 rounded-full bg-indigo-500/70 flex-shrink-0"></span>
                                           <span>{improvement}</span>
                                         </li>
                                       ))}
@@ -528,11 +528,11 @@ export default function ResumeEnhancer() {
                                     <h5 className="text-sm uppercase tracking-widest text-zinc-500 font-bold mb-4 flex items-center gap-2">Original</h5>
                                     <p className="text-zinc-400 font-mono text-sm whitespace-pre-wrap leading-relaxed">{item.original}</p>
                                   </div>
-                                  <div className="bg-fuchsia-500/5 border border-fuchsia-500/20 rounded-2xl p-6 overflow-x-auto relative">
+                                  <div className="bg-cyan-500/5 border border-cyan-500/20 rounded-2xl p-6 overflow-x-auto relative">
                                     <div className="absolute top-0 right-0 p-4">
-                                      <Sparkles className="w-5 h-5 text-fuchsia-400 opacity-50" />
+                                      <Sparkles className="w-5 h-5 text-cyan-400 opacity-50" />
                                     </div>
-                                    <h5 className="text-sm uppercase tracking-widest text-fuchsia-400 font-bold mb-4 flex items-center gap-2">Enhanced Revision</h5>
+                                    <h5 className="text-sm uppercase tracking-widest text-cyan-400 font-bold mb-4 flex items-center gap-2">Enhanced Revision</h5>
                                     <p className="text-zinc-100 font-mono text-sm whitespace-pre-wrap leading-relaxed">{item.enhanced}</p>
                                   </div>
                                 </motion.div>
